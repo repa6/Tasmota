@@ -32,17 +32,10 @@
 #endif
 #ifndef OT_BOILER_MIN
 #define OT_BOILER_MIN 40
-#endif
-#ifndef OT_BOILER_MAX
-#define OT_BOILER_MAX 85
-#endif
+#define OT_BOILER_MAX 65
 
-#ifndef OT_HOT_WATER_DEFAULT
-#define OT_HOT_WATER_DEFAULT 36;
-#endif
-#ifndef OT_BOILER_DEFAULT
-#define OT_BOILER_DEFAULT 85;
-#endif
+#define OT_HOT_WATER_DEFAULT 42;
+#define OT_BOILER_DEFAULT 55;
 
 // Seconds before OT will make an attempt to connect to the boiler after connection error
 #define SNS_OT_DISCONNECT_COOLDOWN_SECONDS 4
@@ -60,7 +53,7 @@ enum OpenThermSettingsFlags
     // If set, DHW is on after restart.
     EnableHotWater = 0x02,
     // If set, keep CH always on after restart. If off, follows the EnableCentralHeatingOnDiagnostics rule
-    EnableCentralHeating = 0x04,
+    EnableCentralHeating = 0x00,
     EnableCooling = 0x08,
     EnableTemperatureCompensation = 0x10,
     EnableCentralHeating2 = 0x20,
@@ -116,6 +109,8 @@ typedef struct OT_BOILER_STATUS_T
     float m_flame_modulation_read;
     // Boiler Temperature
     float m_boiler_temperature_read;
+    // Outside Temperature
+    float m_outside_temperature_read;
 
     // Boiler desired values
     float m_boilerSetpoint;
@@ -170,6 +165,7 @@ void sns_opentherm_init_boiler_status()
     sns_ot_boiler_status.m_hotWaterSetpoint_read = 0;
     sns_ot_boiler_status.m_flame_modulation_read = 0;
     sns_ot_boiler_status.m_boiler_temperature_read = 0;
+    sns_ot_boiler_status.m_outside_temperature_read = 0;
 }
 
 void IRAM_ATTR sns_opentherm_handleInterrupt()
@@ -269,12 +265,15 @@ void sns_opentherm_stat(bool json)
         WSContentSend_P(PSTR("{s}Hot Water Setpoint{m}%d{e}"),
                         (int)sns_ot_boiler_status.m_hotWaterSetpoint_read);
 
-        WSContentSend_P(PSTR("{s}Flame Modulation{m}%d{e}"),
-                        (int)sns_ot_boiler_status.m_flame_modulation_read);
-
         WSContentSend_P(PSTR("{s}Boiler Temp/Setpnt{m}%d / %d{e}"),
                         (int)sns_ot_boiler_status.m_boiler_temperature_read,
                         (int)sns_ot_boiler_status.m_boilerSetpoint);
+                        
+        WSContentSend_P(PSTR("{s}Flame Modulation{m}%d{e}"),
+                        (int)sns_ot_boiler_status.m_flame_modulation_read);
+
+        WSContentSend_P(PSTR("{s}Outside Temperature{m}%d{e}"),
+                        (int)sns_ot_boiler_status.m_outside_temperature_read);
 
         if (OpenTherm::isCentralHeatingActive(sns_ot_boiler_status.m_slave_raw_status))
         {

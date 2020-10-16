@@ -130,7 +130,7 @@ OpenThermCommand sns_opentherm_commands[] = {
      .m_flags = 0,
      .m_results = {{.m_u8 = 0}, {.m_u8 = 0}},
      .m_ot_make_request = sns_opentherm_get_generic_float,
-     .m_ot_parse_response = sns_opentherm_parse_generic_float,
+     .m_ot_parse_response = sns_opentherm_parse_outside_temperature,
      .m_ot_appent_telemetry = sns_opentherm_tele_generic_float},
     {// Read Return water temperature
      .m_command_name = "TRET",
@@ -520,6 +520,12 @@ void sns_opentherm_parse_boiler_temperature(struct OpenThermCommandT *self, stru
     boilerStatus->m_boiler_temperature_read = self->m_results[0].m_float;
 }
 
+void sns_opentherm_parse_outside_temperature(struct OpenThermCommandT *self, struct OT_BOILER_STATUS_T *boilerStatus, unsigned long response)
+{
+    self->m_results[0].m_float = OpenTherm::getFloat(response);
+    boilerStatus->m_outside_temperature_read = self->m_results[0].m_float;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -609,5 +615,4 @@ void sns_opentherm_protocol_reset()
         memset(cmd->m_results, 0, sizeof(OpenThermCommandT::m_results));
     }
 }
-
 #endif

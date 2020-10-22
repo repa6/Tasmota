@@ -29,9 +29,7 @@
 #endif
 #ifndef OT_HOT_WATER_MAX
 #define OT_HOT_WATER_MAX 55
-#endif
-#ifndef OT_BOILER_MIN
-#define OT_BOILER_MIN 40
+#define OT_BOILER_MIN 30
 #define OT_BOILER_MAX 65
 
 #define OT_HOT_WATER_DEFAULT 42;

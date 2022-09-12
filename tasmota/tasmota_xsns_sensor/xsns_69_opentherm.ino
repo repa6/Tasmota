@@ -29,11 +29,20 @@
 #endif
 #ifndef OT_HOT_WATER_MAX
 #define OT_HOT_WATER_MAX 55
+#endif
+#ifndef OT_BOILER_MIN
 #define OT_BOILER_MIN 30
+#endif
+#ifndef OT_BOILER_MAX
 #define OT_BOILER_MAX 65
+#endif
 
+#ifndef OT_HOT_WATER_DEFAULT
 #define OT_HOT_WATER_DEFAULT 42;
+#endif
+#ifndef OT_BOILER_DEFAULT
 #define OT_BOILER_DEFAULT 55;
+#endif
 
 // Seconds before OT will make an attempt to connect to the boiler after connection error
 #define SNS_OT_DISCONNECT_COOLDOWN_SECONDS 4
@@ -208,7 +217,7 @@ void sns_opentherm_processResponseCallback(unsigned long response, int st)
         sns_opentherm_check_retry_request();
         if (--sns_ot_timeout_before_disconnect == 0)
         {
-            sns_ot_connection_status = OpenThermConnectionStatus::OTC_DISCONNECTED;
+        sns_ot_connection_status = OpenThermConnectionStatus::OTC_DISCONNECTED;
         }
         else
         {
@@ -263,16 +272,16 @@ void sns_opentherm_stat(bool json)
         WSContentSend_P(PSTR("{s}Hot Water Setpoint{m}%d{e}"),
                         (int)sns_ot_boiler_status.m_hotWaterSetpoint_read);
 
-        WSContentSend_P(PSTR("{s}Boiler Temp/Setpnt{m}%d / %d{e}"),
-                        (int)sns_ot_boiler_status.m_boiler_temperature_read,
-                        (int)sns_ot_boiler_status.m_boilerSetpoint);
-                        
         WSContentSend_P(PSTR("{s}Flame Modulation{m}%d{e}"),
                         (int)sns_ot_boiler_status.m_flame_modulation_read);
 
+        WSContentSend_P(PSTR("{s}Boiler Temp/Setpnt{m}%d / %d{e}"),
+                        (int)sns_ot_boiler_status.m_boiler_temperature_read,
+                        (int)sns_ot_boiler_status.m_boilerSetpoint);
+
         WSContentSend_P(PSTR("{s}Outside Temperature{m}%d{e}"),
                         (int)sns_ot_boiler_status.m_outside_temperature_read);
-
+                        
         if (OpenTherm::isCentralHeatingActive(sns_ot_boiler_status.m_slave_raw_status))
         {
             WSContentSend_P(PSTR("{s}Central Heating is ACTIVE{m}{e}"));

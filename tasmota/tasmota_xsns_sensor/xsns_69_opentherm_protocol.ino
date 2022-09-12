@@ -530,6 +530,7 @@ void sns_opentherm_parse_outside_temperature(struct OpenThermCommandT *self, str
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define SNS_OT_COMMANDS_COUNT (sizeof(sns_opentherm_commands) / sizeof(OpenThermCommand))
 int sns_opentherm_current_command = SNS_OT_COMMANDS_COUNT;
 
 unsigned long sns_opentherm_get_next_request(struct OT_BOILER_STATUS_T *boilerStatus)
@@ -543,13 +544,13 @@ unsigned long sns_opentherm_get_next_request(struct OT_BOILER_STATUS_T *boilerSt
     // Select next supported command
     while (sns_opentherm_current_command < SNS_OT_COMMANDS_COUNT)
     {
-        struct OpenThermCommandT *cmd = &sns_opentherm_commands[sns_opentherm_current_command];
-        // Return error if command known as not supported
+    struct OpenThermCommandT *cmd = &sns_opentherm_commands[sns_opentherm_current_command];
+    // Return error if command known as not supported
         if (!cmd->m_flags.notSupported)
-        {
-            // Retrurn OT compatible request
-            return cmd->m_ot_make_request(cmd, boilerStatus);
-        }
+    {
+    // Retrurn OT compatible request
+    return cmd->m_ot_make_request(cmd, boilerStatus);
+}
         ++sns_opentherm_current_command;
     }
     return -1;
@@ -615,4 +616,5 @@ void sns_opentherm_protocol_reset()
         memset(cmd->m_results, 0, sizeof(OpenThermCommandT::m_results));
     }
 }
+
 #endif
